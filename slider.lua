@@ -1,7 +1,12 @@
 local HueDevice = 1    -- enter Philips Hue Light ID
+
+-- Nothing to customize below
+-- This code goes into the ON button and the 4 sliders
+
 local HueUser = 'domoplusplus'
 local HueAddress = fibaro:getGlobalValue('Philips_Hue_IP')
 local HuePort = 80
+local HueIcon = fibaro:getGlobalValue('Philips_Hue_IconID')
 
 local myDeviceID = fibaro:getSelfId()
 local R = fibaro:get(myDeviceID, "ui.sliderRed.value")
@@ -58,3 +63,8 @@ bri = math.floor(L * 2.55)
 
 local conn = Net.FHttp(HueAddress,HuePort) 
 conn:PUT('/api/'..HueUser..'/lights/'..HueDevice..'/state', '{"on":true, "bri":'..bri..' , "hue":'..hue..' , "sat":'..sat..' }')
+
+-- now set the icon and store icon state
+HueIcon = HueIcon + math.floor(L*0.99/10) + 1  -- calculate IconID
+fibaro:call(myDeviceID, "setProperty", "currentIcon", HueIcon)
+fibaro:setGlobal('Philips_Hue_'..tostring(HueDevice), HueIcon)
